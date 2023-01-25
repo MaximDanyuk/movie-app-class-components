@@ -18,8 +18,12 @@ class App extends React.PureComponent {
     rated: [],
     genres: [],
   };
-
   componentDidMount() {
+    const { autorKey } = this.state;
+    this.setState({
+      autorKey: JSON.parse(localStorage.getItem('autorKey')) || 0,
+    });
+
     this.setState({
       isLoad: true,
     });
@@ -50,24 +54,23 @@ class App extends React.PureComponent {
       .getGenres()
       .then((data) => this.setState({ genres: data.genres }));
 
-    api
-      .getSession()
-      .then((data) =>
+    if (autorKey.length === 0) {
+      api.getSession().then((data) => {
         this.setState({ autorKey: data.guest_session_id }),
-      );
+          localStorage.setItem(
+            'autorKey',
+            JSON.stringify(data.guest_session_id),
+          );
+      });
+    }
   }
 
   handleCardRate = (id, value) => {
-    const { movieData, autorKey } = this.state;
+    const { autorKey } = this.state;
 
-    movieData.filter((el) => {
-      if (el.id === id) {
-        api
-          .setRate(autorKey, id, value)
-          .catch(() => 'Ошибка на стороне сервера, уже решаем');
-      }
-      return el;
-    });
+    api
+      .setRate(autorKey, id, value)
+      .catch(() => 'Ошибка на стороне сервера, уже решаем');
   };
 
   handleChangeSection = (key) => {

@@ -32,7 +32,7 @@ class Api {
       `${this._url}/movie/${id}/rating?api_key=9e5c75ffd938a1f31a2794138fa3d88b&guest_session_id=${guestId}`,
       {
         headers: {
-          method: 'PUT',
+          method: 'POST',
           'Content-Type': 'application/json',
         },
 
