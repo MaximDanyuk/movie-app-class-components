@@ -8,12 +8,10 @@ const items: TabsProps['items'] = [
   {
     key: 'search',
     label: `search`,
-    /*     children: `Content of Tab Pane 1`, */
   },
   {
     key: 'rated',
     label: `rated`,
-    /*     children: `Content of Tab Pane 2`, */
   },
 ];
 

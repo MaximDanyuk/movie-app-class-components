@@ -13,31 +13,29 @@ const { Meta } = Card;
 class MovieItem extends React.PureComponent {
   render() {
     const {
-      originalTitle,
-      releaseDate,
+      original_title: originalTitle,
+      release_date: releaseDate,
       overview,
       handleCardRate,
-      backdropPath,
-      voteAverage,
+      backdrop_path: backdropPath,
+      vote_average: voteAverage,
       id,
-      genres,
+      movieGrade,
+      genre_ids: currentObjectGenresKeys,
     } = this.props;
+    let value;
+    movieGrade.forEach((el) => {
+      if (el.id === id) {
+        value = el.value;
+      }
+    });
 
     const contextType = GenreMovieContext._currentValue;
-
-    const currentGenresObject = contextType.filter(
-      (el) => el.id === id,
-    );
-    const currentGenresArrayKeys = currentGenresObject.map(
-      (el) => el.genre,
-    );
-
     const currentGenresArray = [];
-    /*   console.log(currentGenresArrayKeys[0].length); */
-    for (let i = 0; i < genres.length; i++) {
-      for (let j = 0; j < currentGenresArrayKeys[0].length; j++) {
-        if (currentGenresArrayKeys[0][j] === genres[i].id) {
-          currentGenresArray.push(genres[i].name);
+    for (let i = 0; i < contextType.length; i++) {
+      for (let j = 0; j < currentObjectGenresKeys.length; j++) {
+        if (contextType[i].id === currentObjectGenresKeys[j]) {
+          currentGenresArray.push(contextType[i].name);
         }
       }
     }
@@ -51,7 +49,7 @@ class MovieItem extends React.PureComponent {
         ? 'circle-rate_yellow-lite'
         : 'circle-rate_green'
     }`;
-
+    const totalRate = voteAverage.toString().slice(0, 3);
     const imageSrc = backdropPath
       ? `https://image.tmdb.org/t/p/original/${backdropPath}`
       : noImage;
@@ -71,7 +69,7 @@ class MovieItem extends React.PureComponent {
           <div className="card__title-area">
             <h3>{originalTitle}</h3>
             <div className={color}>
-              <span>{voteAverage}</span>
+              <span>{totalRate}</span>
             </div>
           </div>
           <p className="card__date">{releaseDate}</p>
@@ -93,7 +91,7 @@ class MovieItem extends React.PureComponent {
         </div>
 
         <Rate
-          defaultValue={0}
+          defaultValue={value || 0}
           count="10"
           className="stars"
           onChange={(value) => handleCardRate(id, value)}

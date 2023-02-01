@@ -17,7 +17,7 @@ class Main extends React.PureComponent {
       section,
       handleChangeSection,
       rated,
-      genres,
+      movieGrade,
     } = this.props;
     return (
       <main className="main page__main">
@@ -28,17 +28,21 @@ class Main extends React.PureComponent {
               debouncedShowSearchData={debouncedShowSearchData}
             />
             <RowItems
+              movieGrade={movieGrade}
               movieData={movieData}
               isEmpty={isEmpty}
               paginationClick={paginationClick}
               isLoad={isLoad}
               number={number}
               handleCardRate={handleCardRate}
-              genres={genres}
             />
           </>
         ) : (
-          <RatedPage rated={rated} genres={genres} />
+          <RatedPage
+            movieGrade={movieGrade}
+            rated={rated}
+            movieData={movieData}
+          />
         )}
       </main>
     );

@@ -15,7 +15,7 @@ class RowItems extends React.PureComponent {
       isEmpty,
       number,
       handleCardRate,
-      genres,
+      movieGrade,
     } = this.props;
     return isLoad ? (
       <Spin />
@@ -31,15 +31,10 @@ class RowItems extends React.PureComponent {
             <section className="card-items">
               {movieData.map((el) => (
                 <MovieItem
+                  movieGrade={movieGrade}
                   key={el.id}
-                  backdropPath={el.backdrop_path}
-                  originalTitle={el.original_title}
-                  releaseDate={el.release_date}
-                  voteAverage={el.vote_average}
-                  overview={el.overview}
                   handleCardRate={handleCardRate}
-                  id={el.id}
-                  genres={genres}
+                  {...el}
                 />
               ))}
             </section>

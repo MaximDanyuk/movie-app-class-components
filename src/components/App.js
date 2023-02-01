@@ -8,80 +8,136 @@ import React from 'react';
 
 class App extends React.PureComponent {
   state = {
-    movieData: [], /// setMovieData
-    isLoad: true, /// setIsLoad
-    isEmpty: false, /// setIsEmpty
-    number: 1, /// SetNumber
-    section: 'search', /// setSection
-    genreMovie: [], /// setGenreMovie
+    movieData: [],
+    isLoad: true,
+    isEmpty: false,
+    number: 1,
+    section: 'search',
+    genresNames: [],
     autorKey: 0,
     rated: [],
-    genres: [],
+    movieGrade: [],
   };
-  componentDidMount() {
-    const { autorKey } = this.state;
-    this.setState({
-      autorKey: JSON.parse(localStorage.getItem('autorKey')) || 0,
-    });
 
+  getPopularMoviesFunction = () => {
     this.setState({
       isLoad: true,
     });
     api
       .getPopularMovies({ page: 1 })
-      .then((findMovies) => {
-        this.setState({
-          movieData: findMovies.results,
-        });
-
-        const genres = findMovies.results.map((el) => ({
-          genre: el.genre_ids,
-          id: el.id,
-        }));
-
-        this.setState({
-          genreMovie: genres,
-        });
-      })
+      .then((findMovies) =>
+        this.setState({ movieData: findMovies.results }),
+      )
       .catch(() => 'Ошибка на стороне сервера, уже решаем')
       .finally(() => {
         this.setState({
           isLoad: false,
         });
       });
+  };
+  /*  */
+  /*  */
+  /*  */
+  /*  */
+  /*  */
+  /*  */
+  /*  */
+  componentDidMount() {
+    this.setState({
+      movieGrade:
+        JSON.parse(localStorage.getItem('movieGrade')) || [],
+    });
 
+    this.getPopularMoviesFunction();
     api
       .getGenres()
-      .then((data) => this.setState({ genres: data.genres }));
+      .then((data) => {
+        this.setState({ genresNames: data.genres });
+        /*     console.log(data.genres); */
+      })
+      .catch(() => 'Ошибка на стороне сервера, уже решаем');
+  }
 
-    if (autorKey.length === 0) {
-      api.getSession().then((data) => {
-        this.setState({ autorKey: data.guest_session_id }),
+  /*  */
+  /*  */
+  /*  */
+  /*  */
+
+  handleCardRate = (id, value) => {
+    const { autorKey, movieGrade } = this.state;
+    api
+      .setRate(autorKey, id, value)
+      .then((data) => {
+        if (movieGrade.some((el) => el.id === id)) {
+          const newRated = movieGrade.filter((el) => {
+            if (el.id === id) {
+              el.value = value;
+            }
+            return el;
+          });
+          this.setState({ movieGrade: newRated });
+        } else {
+          const movieGradeItem = {};
+          movieGradeItem.id = id;
+          movieGradeItem.value = value;
+          this.setState(({ movieGrade }) => {
+            return { movieGrade: [movieGradeItem, ...movieGrade] };
+          });
+        }
+      })
+      .catch(() => 'Ошибка на стороне сервера, уже решаем');
+  };
+
+  componentDidUpdate(prevProps, prevstate) {
+    const { movieGrade } = this.state;
+    if (
+      JSON.stringify(movieGrade) !=
+      JSON.stringify(localStorage.getItem('movieGrade'))
+    ) {
+      localStorage.setItem('movieGrade', JSON.stringify(movieGrade));
+    }
+
+    const { autorKey } = this.state;
+
+    this.setState({
+      autorKey: JSON.parse(localStorage.getItem('autorKey')),
+    });
+    if (!autorKey && autorKey !== 0) {
+      api
+        .getSession()
+        .then((data) => {
+          this.setState({ autorKey: data.guest_session_id });
           localStorage.setItem(
             'autorKey',
             JSON.stringify(data.guest_session_id),
           );
-      });
+        })
+        .catch(() => 'Ошибка на стороне сервера, уже решаем');
     }
   }
 
-  handleCardRate = (id, value) => {
-    const { autorKey } = this.state;
-
-    api
-      .setRate(autorKey, id, value)
-      .catch(() => 'Ошибка на стороне сервера, уже решаем');
-  };
-
   handleChangeSection = (key) => {
     const { autorKey } = this.state;
+    this.setState({
+      isLoad: true,
+    });
     this.setState({
       section: key,
     });
     if (key === 'rated') {
       api
         .getRated(autorKey)
-        .then((data) => this.setState({ rated: data.results }));
+        .then((data) => {
+          this.setState({ rated: data.results });
+        })
+        .catch(() => 'Ошибка на стороне сервера, уже решаем')
+        .finally(() => {
+          this.setState({
+            isLoad: false,
+          });
+        });
+    } else {
+      this.getPopularMoviesFunction();
     }
   };
 
@@ -100,15 +156,6 @@ class App extends React.PureComponent {
           this.setState({
             movieData: findMovies.results,
             isEmpty: false,
-          });
-
-          const genres = findMovies.results.map((el) => ({
-            genre: el.genre_ids,
-            id: el.id,
-          }));
-
-          this.setState({
-            genreMovie: genres,
           });
         }
       })
@@ -157,28 +204,29 @@ class App extends React.PureComponent {
 
   render() {
     const debouncedShowSearchData = this.debounce((text) => {
+      text = text.trim();
       if (text.length) {
         this.handleSearchMovie(text, 1);
       }
     }, 350);
 
     const {
-      genreMovie,
+      genresNames,
       movieData,
       isLoad,
       isEmpty,
       number,
       section,
-      setSection,
       rated,
-      genres,
+      movieGrade,
     } = this.state;
+
     return (
       <CheckConnection>
-        <GenreMovieContext.Provider value={genreMovie}>
+        <GenreMovieContext.Provider value={genresNames}>
           <Main
+            movieGrade={movieGrade}
             rated={rated}
-            genres={genres}
             debouncedShowSearchData={debouncedShowSearchData}
             movieData={movieData}
             paginationClick={this.paginationClick}
@@ -186,7 +234,6 @@ class App extends React.PureComponent {
             isEmpty={isEmpty}
             number={number}
             handleCardRate={this.handleCardRate}
-            setSection={setSection}
             section={section}
             handleChangeSection={this.handleChangeSection}
           />
