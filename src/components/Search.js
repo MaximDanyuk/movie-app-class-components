@@ -12,15 +12,6 @@ class Search extends React.PureComponent {
   handleInputValue = (evt) => {
     const { debouncedShowSearchData } = this.props;
 
-    const temp = evt.target.value.length;
-    let old = '';
-    /// change the results if new values
-    if (evt.target.value.length === 0 || temp !== old) {
-      this.setState({
-        inputValue: '',
-      });
-    }
-    old = temp;
     debouncedShowSearchData(evt.target.value);
 
     this.setState({

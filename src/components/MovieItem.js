@@ -29,8 +29,8 @@ class MovieItem extends React.PureComponent {
         value = el.value;
       }
     });
+    const contextType = useContext(GenreMovieContext);
 
-    const contextType = GenreMovieContext._currentValue;
     const currentGenresArray = [];
     for (let i = 0; i < contextType.length; i++) {
       for (let j = 0; j < currentObjectGenresKeys.length; j++) {
@@ -85,7 +85,7 @@ class MovieItem extends React.PureComponent {
         </div>
 
         <div className="card__description">
-          <Descriptions.Item label="Address">
+          <Descriptions.Item label="description">
             {overview}
           </Descriptions.Item>
         </div>
@@ -102,3 +102,4 @@ class MovieItem extends React.PureComponent {
 }
 
 export default MovieItem;
+// Address

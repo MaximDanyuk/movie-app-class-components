@@ -12,10 +12,10 @@ class App extends React.PureComponent {
     isLoad: true,
     isEmpty: false,
     number: 1,
+    rated: [],
     section: 'search',
     genresNames: [],
     autorKey: 0,
-    rated: [],
     movieGrade: [],
   };
 
@@ -207,6 +207,10 @@ class App extends React.PureComponent {
       text = text.trim();
       if (text.length) {
         this.handleSearchMovie(text, 1);
+      }
+
+      if (text.length === 0) {
+        getPopularMoviesFunction();
       }
     }, 350);
 
