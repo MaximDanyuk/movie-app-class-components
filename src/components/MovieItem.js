@@ -2,7 +2,7 @@
 
 import GenreMovieContext from '../contexts/GenreMovieContext';
 import noImage from '../images/noimage.png';
-import React from 'react';
+import React, { useContext } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import 'react-lazy-load-image-component/src/effects/opacity.css';
@@ -29,13 +29,13 @@ class MovieItem extends React.PureComponent {
         value = el.value;
       }
     });
-    const contextType = useContext(GenreMovieContext);
+    const contextType = GenreMovieContext;
 
     const currentGenresArray = [];
-    for (let i = 0; i < contextType.length; i++) {
+    for (let i = 0; i < this.context.length; i++) {
       for (let j = 0; j < currentObjectGenresKeys.length; j++) {
-        if (contextType[i].id === currentObjectGenresKeys[j]) {
-          currentGenresArray.push(contextType[i].name);
+        if (this.context[i].id === currentObjectGenresKeys[j]) {
+          currentGenresArray.push(this.context[i].name);
         }
       }
     }
