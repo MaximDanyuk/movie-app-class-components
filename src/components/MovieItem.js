@@ -2,7 +2,7 @@
 
 import GenreMovieContext from '../contexts/GenreMovieContext';
 import noImage from '../images/noimage.png';
-import React, { useContext } from 'react';
+import React from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import 'react-lazy-load-image-component/src/effects/opacity.css';
