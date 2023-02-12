@@ -16,6 +16,7 @@ class RowItems extends React.PureComponent {
       number,
       handleCardRate,
       movieGrade,
+      moviesTotalLength,
     } = this.props;
     return isLoad ? (
       <Spin />
@@ -40,7 +41,9 @@ class RowItems extends React.PureComponent {
             </section>
             <Pagination
               defaultCurrent={number}
-              total={500}
+              total={
+                moviesTotalLength > 500 ? 500 : moviesTotalLength
+              }
               className="pagination"
               onChange={(current) => paginationClick(current)}
             />

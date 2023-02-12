@@ -17,6 +17,7 @@ class App extends React.PureComponent {
     genresNames: [],
     autorKey: 0,
     movieGrade: [],
+    moviesTotalLength: 0,
   };
 
   getPopularMoviesFunction = () => {
@@ -26,7 +27,10 @@ class App extends React.PureComponent {
     api
       .getPopularMovies({ page: 1 })
       .then((findMovies) =>
-        this.setState({ movieData: findMovies.results }),
+        this.setState({
+          movieData: findMovies.results,
+          moviesTotalLength: findMovies.total_results,
+        }),
       )
       .catch(() => 'Ошибка на стороне сервера, уже решаем')
       .finally(() => {
@@ -90,14 +94,14 @@ class App extends React.PureComponent {
 
   componentDidUpdate(prevProps, prevstate) {
     const { movieGrade } = this.state;
+    const { autorKey } = this.state;
+
     if (
       JSON.stringify(movieGrade) !=
       JSON.stringify(localStorage.getItem('movieGrade'))
     ) {
       localStorage.setItem('movieGrade', JSON.stringify(movieGrade));
     }
-
-    const { autorKey } = this.state;
 
     this.setState({
       autorKey: JSON.parse(localStorage.getItem('autorKey')),
@@ -156,6 +160,7 @@ class App extends React.PureComponent {
           this.setState({
             movieData: findMovies.results,
             isEmpty: false,
+            moviesTotalLength: findMovies.total_results,
           });
         }
       })
@@ -210,10 +215,9 @@ class App extends React.PureComponent {
       }
 
       if (text.length === 0) {
-        getPopularMoviesFunction();
+        this.getPopularMoviesFunction();
       }
     }, 350);
-
     const {
       genresNames,
       movieData,
@@ -223,8 +227,8 @@ class App extends React.PureComponent {
       section,
       rated,
       movieGrade,
+      moviesTotalLength,
     } = this.state;
-
     return (
       <CheckConnection>
         <GenreMovieContext.Provider value={genresNames}>
@@ -240,6 +244,7 @@ class App extends React.PureComponent {
             handleCardRate={this.handleCardRate}
             section={section}
             handleChangeSection={this.handleChangeSection}
+            moviesTotalLength={moviesTotalLength}
           />
         </GenreMovieContext.Provider>
       </CheckConnection>

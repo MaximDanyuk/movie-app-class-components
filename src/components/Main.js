@@ -18,6 +18,7 @@ class Main extends React.PureComponent {
       handleChangeSection,
       rated,
       movieGrade,
+      moviesTotalLength,
     } = this.props;
     return (
       <main className="main page__main">
@@ -35,6 +36,7 @@ class Main extends React.PureComponent {
               isLoad={isLoad}
               number={number}
               handleCardRate={handleCardRate}
+              moviesTotalLength={moviesTotalLength}
             />
           </>
         ) : (

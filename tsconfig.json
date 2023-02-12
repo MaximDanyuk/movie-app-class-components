@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "traceResolution": false,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "removeComments": false,
+    "sourceMap": false,
+    "module": "ES6",
+    "target": "es2022",
+    "outDir": "dist"
+  },
+  "include": ["src/**/*"]
+}
